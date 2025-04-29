@@ -1,4 +1,4 @@
-# API de Integración Sistema KDL / UNIDESK-SIIP
+# API de Integración Sistema KDL
 
 ### API REST KDL  
 *versión 0.0.3*  
