@@ -1,53 +1,34 @@
-# API de Integración Sistema KDL
+# API de Integración Sistema KDL / UNIDESK-SIIP
 
-### API REST KDL  
-*versión 0.0.3*  
+### API REST KDL
+*versión 0.0.3*
 
-Este endpoint es responsable de actualizar el estado de fallas ya procesadas en el sistema.  
+Este endpoint es responsable de actualizar el estado de registros de fallas ya entregadas.
 
-## Descripción  
-Cuando una notificación de falla es visualizada por el usuario, se debe actualizar su estado a **"descargada"** para evitar que:  
-- La misma notificación reaparezca en búsquedas futuras  
-- Se generen duplicados en el sistema de monitoreo  
+Cuando una notificación de falla es visualizada, es necesario actualizar su estado para indicar que ya ha sido tratada, con el fin de evitar que la misma notificación se muestre nuevamente en futuras consultas.
 
-El proceso se realiza mediante el envío de una lista de IDs (identificadores únicos) a este endpoint.  
+Esta actualización se realiza enviando una lista de identificadores a este endpoint, que será el responsable de actualizar el estado de la notificación.
 
-## Especificaciones Técnicas  
+Esta regla busca preservar el orden y la eficacia del sistema de monitoreo, para que los usuarios puedan centrarse únicamente en las notificaciones relevantes y útiles.
 
-| Método | Endpoint                                  | Ejemplo de URL                                                      |  
-|--------|------------------------------------------|--------------------------------------------------------------------|  
-| POST   | `/confirma-fallas-descargadas/v1/maua`   | `https://api-afericao.kdltelegestao.com/confirma-fallas-descargadas/v1/maua` |  
+| Método | URI                                         | Ejemplo                                                   | 
+|--------|---------------------------------------------|:----------------------------------------------------------| 
+| POST   | `/confirma-fallas-descargadas/v1/maua`      | api-afericao.kdltelegestao.com/confirma-fallas-descargadas/v1/maua |
 
-### Parámetros  
-- **Lista de IDs**: Array de números `uint32`  
-- **Content-Type**: `application/json`  
-
-## Ejemplo de Implementación  
-
+##### Ejemplo de uso
 ```go
-package main
+// lista de valores uint32
+listaUint32 = [123456789, 987654321, 111111111]
 
-import (
-	"bytes"
-	"encoding/json"
-	"net/http"
-)
+// convertir la lista a formato JSON
+jsonData = json.dumps(listaUint32)
 
-func main() {
-	// 1. Preparar datos
-	ids := []uint32{123456789, 987654321, 111111111}
-	jsonData, _ := json.Marshal(ids)
+// definir los encabezados de la solicitud
+headers = {"Content-Type": "application/json"}
 
-	// 2. Configurar request
-	req, _ := http.NewRequest(
-		"POST",
-		"https://api-afericao.kdltelegestao.com/confirma-fallas-descargadas/v1/maua",
-		bytes.NewBuffer(jsonData),
-	)
-	req.Header.Set("Content-Type", "application/json")
+// realizar la solicitud POST
+response = requests.post(url="api-afericao.kdltelegestao.com/confirma-fallas-descargadas/v1/maua", data=jsonData, headers=headers)
+```
 
-	// 3. Enviar solicitud
-	client := &http.Client{}
-	resp, _ := client.Do(req)
-	defer resp.Body.Close()
-}
+## Nota importante
+En esta versión no se requiere el envío de token de acceso.
